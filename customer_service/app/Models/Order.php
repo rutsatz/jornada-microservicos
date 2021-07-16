@@ -6,7 +6,7 @@ use App\Models\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class Order extends Model
 {
     use HasFactory;
 
@@ -24,7 +24,31 @@ class Product extends Model
     // queremos manipular na base de dados.
     protected $fillable = [
         "id",
-        "name",
+        "customer_id",
+        "status",
+        "discount",
+        "total",
+        "order_date"
     ];
+
+    protected $casts = [
+        'order_date' => 'date',
+        'total' => 'float',
+        'discount' => 'float'
+    ];
+
+    // Assim que faço o meu relacionamento com ActiveRecord.
+    // A minha ordem de serviço podem ter vários itens.
+    public function items()
+    {
+        return $this->hasMany(OrderItem::class);
+    }
+
+    // Assim que faço o meu relacionamento com ActiveRecord.
+    // A order de serviço pertence a um cliente.
+    public function customer()
+    {
+        return $this->belongsTo(Customer::class);
+    }
 
 }

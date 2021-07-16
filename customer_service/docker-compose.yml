@@ -1,11 +1,11 @@
 version: '3'
 services:
-  # Serviço de produtos
-  productapp:
+  # Serviço de clientes
+  customerapp:
     # build . digo para ele procurar o Dockerfile para construir a imagem
     # na pasta em que ele está.
     build: .
-    # Todos os arquivos que colocar na pasta do serviços de produtos, serão compartilhados
+    # Todos os arquivos que colocar na pasta do serviços de clientes, serão compartilhados
     # com o container.
     volumes:
       # ./ Pasta atual do projeto e quero compartilhar na pasta
@@ -13,11 +13,11 @@ services:
       - ./:/var/www
     # Deve subir depois de subir o mysql e o redis
     depends_on:
-      - productapp-mysql
-      - productapp-redis
+      - customerapp-mysql
+      - customerapp-redis
 
   # Instala o mysql
-  productapp-mysql:
+  customerapp-mysql:
     # Agora instala a partir de uma imagem
     image: mysql:5.7.22
     # Quando subir o mysql, roda esse comando.
@@ -35,24 +35,24 @@ services:
     # Configura algumas variáveis de ambiente que essa imagem usa, para quando subir o container,
     # ela já criar o banco de dados, usuário e deixar tudo configurado e criado para nós.blkio_config:
     environment:
-      MYSQL_DATABASE: productapp
+      MYSQL_DATABASE: customerapp
       MYSQL_ROOT_PASSWORD: root
 
   # Cria o serviço do nginx, baseado no nosso Dockerfile
-  productapp-nginx:
+  customerapp-nginx:
     build: ./.docker/nginx
     restart: always
-    # Aponta a nossa porta 8001 pra porta 80 do container
+    # Aponta a nossa porta 8002 pra porta 80 do container
     ports:
-      - "8001:80"
+      - "8002:80"
     volumes:
       - ./:/var/www
-    # Somente deve subir depois que o meu serviço de produtos já estiver rodando
+    # Somente deve subir depois que o meu serviço de clientes já estiver rodando
     depends_on:
-      - productapp
+      - customerapp
 
   # Crio meu banco redis de chave-valor para trabalhar com cache.
-  productapp-redis:
+  customerapp-redis:
     image: redis:alpine
     expose:
       # Expõe a porta padrão do redis

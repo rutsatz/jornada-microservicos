@@ -6,7 +6,7 @@ use App\Models\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class Customer extends Model
 {
     use HasFactory;
 
@@ -25,6 +25,19 @@ class Product extends Model
     protected $fillable = [
         "id",
         "name",
+        "email",
+        "phone",
+        "address",
+        "city",
+        "state",
+        "zipcode",
     ];
+
+    // Assim que faço o meu relacionamento com ActiveRecord.
+    // Um cliente pode ter várias ordens de serviço.
+    public function orders()
+    {
+        return $this->hasMany(Order::class);
+    }
 
 }
