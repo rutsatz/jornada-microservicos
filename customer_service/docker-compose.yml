@@ -1,0 +1,59 @@
+version: '3'
+services:
+  # Serviço de produtos
+  productapp:
+    # build . digo para ele procurar o Dockerfile para construir a imagem
+    # na pasta em que ele está.
+    build: .
+    # Todos os arquivos que colocar na pasta do serviços de produtos, serão compartilhados
+    # com o container.
+    volumes:
+      # ./ Pasta atual do projeto e quero compartilhar na pasta
+      # /var/www dentro do contaienr
+      - ./:/var/www
+    # Deve subir depois de subir o mysql e o redis
+    depends_on:
+      - productapp-mysql
+      - productapp-redis
+
+  # Instala o mysql
+  productapp-mysql:
+    # Agora instala a partir de uma imagem
+    image: mysql:5.7.22
+    # Quando subir o mysql, roda esse comando.
+    command: --innodb-use-native-aio=0
+    # Se o container cair, ele deve subir novamente
+    restart: always
+    # Portas que quero expor para conectar de fora.
+    ports:
+      - "3306"
+    # Criamos uma pasta dbdata, para quando o container parar, não perder os dados.volumes:
+    # E apontamos essa pasta dbdata, para a pasta /var/lib/mysql, que é onde o mysql salva
+    # os seus arquivos por padrão.
+    volumes:
+      - "./.docker/dbdata:/var/lib/mysql"
+    # Configura algumas variáveis de ambiente que essa imagem usa, para quando subir o container,
+    # ela já criar o banco de dados, usuário e deixar tudo configurado e criado para nós.blkio_config:
+    environment:
+      MYSQL_DATABASE: productapp
+      MYSQL_ROOT_PASSWORD: root
+
+  # Cria o serviço do nginx, baseado no nosso Dockerfile
+  productapp-nginx:
+    build: ./.docker/nginx
+    restart: always
+    # Aponta a nossa porta 8001 pra porta 80 do container
+    ports:
+      - "8001:80"
+    volumes:
+      - ./:/var/www
+    # Somente deve subir depois que o meu serviço de produtos já estiver rodando
+    depends_on:
+      - productapp
+
+  # Crio meu banco redis de chave-valor para trabalhar com cache.
+  productapp-redis:
+    image: redis:alpine
+    expose:
+      # Expõe a porta padrão do redis
+      - 6379
