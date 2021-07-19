@@ -1,7 +1,7 @@
 version: '3'
 services:
   # Serviço de clientes
-  customerapp:
+  rentalapp:
     # build . digo para ele procurar o Dockerfile para construir a imagem
     # na pasta em que ele está.
     build: .
@@ -13,11 +13,11 @@ services:
       - ./:/var/www
     # Deve subir depois de subir o mysql e o redis
     depends_on:
-      - customerapp-mysql
-      - customerapp-redis
+      - rentalapp-mysql
+      - rentalapp-redis
 
   # Instala o mysql
-  customerapp-mysql:
+  rentalapp-mysql:
     # Agora instala a partir de uma imagem
     image: mysql:5.7.22
     # Quando subir o mysql, roda esse comando.
@@ -35,24 +35,24 @@ services:
     # Configura algumas variáveis de ambiente que essa imagem usa, para quando subir o container,
     # ela já criar o banco de dados, usuário e deixar tudo configurado e criado para nós.blkio_config:
     environment:
-      MYSQL_DATABASE: customerapp
+      MYSQL_DATABASE: rentalapp
       MYSQL_ROOT_PASSWORD: root
 
   # Cria o serviço do nginx, baseado no nosso Dockerfile
-  customerapp-nginx:
+  rentalapp-nginx:
     build: ./.docker/nginx
     restart: always
-    # Aponta a nossa porta 8002 pra porta 80 do container
+    # Aponta a nossa porta 8000 pra porta 80 do container
     ports:
-      - "8002:80"
+      - "8000:80"
     volumes:
       - ./:/var/www
     # Somente deve subir depois que o meu serviço de clientes já estiver rodando
     depends_on:
-      - customerapp
+      - rentalapp
 
   # Crio meu banco redis de chave-valor para trabalhar com cache.
-  customerapp-redis:
+  rentalapp-redis:
     image: redis:alpine
     expose:
       # Expõe a porta padrão do redis

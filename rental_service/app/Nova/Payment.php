@@ -3,27 +3,30 @@
 namespace App\Nova;
 
 use Illuminate\Http\Request;
+use Laravel\Nova\Fields\BelongsTo;
 use Laravel\Nova\Fields\Currency;
+use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
-use Laravel\Nova\Fields\Text;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Textarea;
+use Laravel\Nova\Http\Requests\NovaRequest;
 
-class Product extends Resource
+class Payment extends Resource
 {
     /**
      * The model the resource corresponds to.
      *
      * @var string
      */
-    public static $model = \App\Models\Product::class;
+    public static $model = \App\Models\Payment::class;
 
     /**
      * The single value that should be used to represent the resource when being displayed.
      *
      * @var string
      */
-    public static $title = 'name';
+    public static $title = 'id';
 
     /**
      * The columns that should be searched.
@@ -32,30 +35,35 @@ class Product extends Resource
      */
     public static $search = [
         'id',
-        'name'
     ];
 
     /**
      * Get the fields displayed by the resource.
      *
-     * @param Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function fields(Request $request)
     {
         return [
-            // Relaciona os campos entre o Resource e o Model
             ID::make(__('ID'), 'id')->sortable(),
-            Text::make("Name")->sortable(),
-//            Currency::make("Price")->sortable(),
-            Number::make("Price")->sortable(),
+            BelongsTo::make("Order"),
+            Select::make("Payment type", "payment_type")->options([
+                'Cash'=>'Cash',
+                'Deposit'=>'Deposit',
+                'Credit Card'=>'Credit Card',
+            ]),
+            Textarea::make("Description"),
+//            Currency::make("Amount"),
+            Number::make("Amount"),
+            Date::make("Payment date", 'payment_date'),
         ];
     }
 
     /**
      * Get the cards available for the request.
      *
-     * @param Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function cards(Request $request)
@@ -66,7 +74,7 @@ class Product extends Resource
     /**
      * Get the filters available for the resource.
      *
-     * @param Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function filters(Request $request)
@@ -77,7 +85,7 @@ class Product extends Resource
     /**
      * Get the lenses available for the resource.
      *
-     * @param Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function lenses(Request $request)
@@ -88,7 +96,7 @@ class Product extends Resource
     /**
      * Get the actions available for the resource.
      *
-     * @param Request $request
+     * @param  \Illuminate\Http\Request  $request
      * @return array
      */
     public function actions(Request $request)

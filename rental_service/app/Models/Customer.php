@@ -27,10 +27,6 @@ class Customer extends Model
         "name",
         "email",
         "phone",
-        "address",
-        "city",
-        "state",
-        "zipcode",
     ];
 
     // Assim que faço o meu relacionamento com ActiveRecord.

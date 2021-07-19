@@ -45,9 +45,8 @@ class OrderItem extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
             BelongsTo::make("Order"),
-            BelongsTo::make("Product"),
+            BelongsTo::make("Product")->searchable(),
             Number::make("Qtd"),
-            Currency::make("Total")
         ];
     }
 

@@ -32,7 +32,8 @@ class Customer extends Resource
     public static $search = [
         'id',
         'name',
-        'email'
+        'email',
+        'phone'
     ];
 
     /**
@@ -48,10 +49,6 @@ class Customer extends Resource
             Text::make('Name')->sortable(),
             Text::make('Email')->sortable(),
             Text::make('Phone')->sortable(),
-            Text::make('Address')->hideFromIndex(),
-            Text::make('City')->hideFromIndex(),
-            Text::make('State')->hideFromIndex(),
-            Text::make('Zipcode')->hideFromIndex(),
             HasMany::make('Orders'),
         ];
     }

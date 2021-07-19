@@ -26,15 +26,24 @@ class Order extends Model
         "id",
         "customer_id",
         "status",
+        "downpayment", // Valor de entrada que o cliente paga
         "discount",
+        "delivery_fee", // Taxa de entrega
+        "late_fee", // Taxa de atraso da entrega
         "total",
-        "order_date"
+        "balance", // Saldo devedor do cliente
+        "order_date", // Data da ordem, retirada do produto
+        "return_date" // Dava da devolução do produto
     ];
 
     protected $casts = [
         'order_date' => 'date',
+        'return_date' => 'date',
         'total' => 'float',
-        'discount' => 'float'
+        'discount' => 'float',
+        'delivery_fee' => 'float',
+        'late_fee' => 'float',
+        'balance' => 'float',
     ];
 
     // Assim que faço o meu relacionamento com ActiveRecord.
@@ -49,6 +58,13 @@ class Order extends Model
     public function customer()
     {
         return $this->belongsTo(Customer::class);
+    }
+
+    // Assim que faço o meu relacionamento com ActiveRecord.
+    // A order pode ter vários pagamentos.
+    public function payments()
+    {
+        return $this->hasMany(Payment::class);
     }
 
 }

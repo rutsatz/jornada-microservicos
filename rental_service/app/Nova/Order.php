@@ -9,6 +9,7 @@ use Laravel\Nova\Fields\Date;
 use Laravel\Nova\Fields\HasMany;
 use Laravel\Nova\Fields\ID;
 use Laravel\Nova\Fields\Number;
+use Laravel\Nova\Fields\Select;
 use Laravel\Nova\Fields\Text;
 use Laravel\Nova\Http\Requests\NovaRequest;
 
@@ -48,11 +49,23 @@ class Order extends Resource
         return [
             ID::make(__('ID'), 'id')->sortable(),
             BelongsTo::make("Customer")->searchable(),
-            Text::make("Status"),
-            Number::make("Discount"),
+            Select::make("Status")->options([
+               'Reservado'=>'Reservado',
+               'Aguardando Retirada'=>'Aguardando Retirada',
+               'Entregue'=>'Entregue',
+               'Concluido'=>'Concluido'
+            ]),
+            Number::make("Downpayment")->hideFromIndex(), // Esconde da listagem
+            Number::make("Delivery fee", 'delivery_fee')->hideFromIndex(), // Esconde da listagem
+            Number::make("Late fee", 'late_fee')->hideFromIndex(), // Esconde da listagem
+            Number::make("Discount")->hideFromIndex(),
+            Date::make("Reservation date", "order_date"),
+            Date::make("Return date", "return_date"),
             Number::make("Total"),
-            Date::make("Date", "order_date"),
-            HasMany::make("Items", "items", "App\Nova\OrderItem")
+            Number::make("Balance"),
+            HasMany::make("Items", "items", "App\Nova\OrderItem"),
+            // Não precisa repetir tudo pois o nome da entidade é o mesmo
+            HasMany::make("Payments")->hideFromIndex(),
         ];
     }
 

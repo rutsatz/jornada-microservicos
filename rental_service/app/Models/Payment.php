@@ -6,7 +6,7 @@ use App\Models\Traits\Uuid;
 use Illuminate\Database\Eloquent\Factories\HasFactory;
 use Illuminate\Database\Eloquent\Model;
 
-class Product extends Model
+class Payment extends Model
 {
     use HasFactory;
 
@@ -24,8 +24,23 @@ class Product extends Model
     // queremos manipular na base de dados.
     protected $fillable = [
         "id",
-        "name",
-        "price",
+        "order_id",
+        "payment_type",
+        "description",
+        "amount",
+        "payment_date",
     ];
+
+    // Faz o cast das minhas variáveis.
+    protected $casts = [
+        'payment_date' => 'date',
+    ];
+
+    // Assim que faço o meu relacionamento com ActiveRecord.
+    // O meu pagamento pertence a uma ordem.
+    public function order()
+    {
+        return $this->belongsTo(Order::class);
+    }
 
 }
