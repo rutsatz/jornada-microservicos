@@ -67,4 +67,55 @@ class Order extends Model
         return $this->hasMany(Payment::class);
     }
 
+    // Pega o valor total da ordem
+    public function getTotal()
+    {
+        return $this->itemsTotal() + $this->late_fee + $this->delivery_fee - $this->discount;
+    }
+
+    // Pegar o valor total da order. (taxa de entrega + taxa de entrega atrasada + desconto + qtd de itens, etc)
+    // Para isso, vou pegar o valor total dos itens.
+    public function itemsTotal() {
+        $totalItems = 0;
+        // Percore todos os itens salvos no banco
+        foreach ($this->items as $item)
+        {
+            $totalItems += $item->product->price * $item->qtd;
+        }
+        return $totalItems;
+    }
+
+    // Calcular o total pago
+    public function totalPayments()
+    {
+        $total = 0;
+        foreach ($this->payments as $payment)
+        {
+            $total += $payment->amount;
+        }
+        return $total;
+    }
+
+    // Calcular o saldo devedor
+    public function adjustBalance()
+    {
+        // Verifica se o balance já está correto, para não precisar ficar toda hora alterando no banco de dados.
+        // Então somente atualiza o balance se ele tiver mudado
+        if ($this->balance != $this->getTotal() - $this->totalPayments())
+        {
+            $this->balance = $this->getTotal() - $this->totalPayments();
+            $this->save();
+        }
+    }
+
+    // Toda vez que adicionar ou alterar um item, precisa atualizar o valor total da ordem.
+    public function adjustTotal()
+    {
+        if ($this->total != $this->getTotal())
+        {
+            $this->total = $this->getTotal();
+            $this->save();
+        }
+    }
+
 }

@@ -25,3 +25,5 @@ docker-compose exec productapp bash
 ### Criar um resource gerenciado pelo Laravel Nova
 `php artisan nova:resource Product`
 
+### Criar um observer para escutar alterações no model
+`php artisan make:observer OrderObserver`

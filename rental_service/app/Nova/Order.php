@@ -61,8 +61,8 @@ class Order extends Resource
             Number::make("Discount")->hideFromIndex(),
             Date::make("Reservation date", "order_date"),
             Date::make("Return date", "return_date"),
-            Number::make("Total"),
-            Number::make("Balance"),
+            Number::make("Total")->readonly(), // Calculado automaticamente
+            Number::make("Balance")->readonly(), // Calculado automaticamente
             HasMany::make("Items", "items", "App\Nova\OrderItem"),
             // Não precisa repetir tudo pois o nome da entidade é o mesmo
             HasMany::make("Payments")->hideFromIndex(),
